@@ -48,25 +48,6 @@ A full-stack booking and reservation management application built with Java, Spr
 - Docker Compose
 - Git
 
-## Project Structure
-
-```text
-smart-booking-system/
-├── backend/
-│   ├── src/
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   └── pom.xml
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   └── package.json
-│
-├── .gitignore
-└── README.md
-```
-
 ## Getting Started
 
 ### Prerequisites
