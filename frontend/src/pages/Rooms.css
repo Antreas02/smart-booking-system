@@ -1,0 +1,182 @@
+.rooms-page {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100vh - 140px);
+    padding: 40px;
+
+    background:
+        linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.55)),
+        url('/images/rooms-backround.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.rooms-page h2 {
+    margin-bottom: 25px;
+    font-size: 28px;
+    color: #ffffff;
+}
+
+.rooms-page>h3 {
+    margin-top: 30px;
+    margin-bottom: 18px;
+    color: #ffffff;
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 360px));
+    align-items: start;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.room-card {
+    padding: 24px;
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+}
+
+.room-card h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.room-card p {
+    margin: 10px 0;
+    color: #ffffff;
+}
+
+.room-status {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.room-status.available {
+    color: #15803d;
+    background-color: #dcfce7;
+}
+
+.room-status.unavailable {
+    color: #b91c1c;
+    background-color: #fee2e2;
+}
+
+.room-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.room-actions button {
+    padding: 9px 15px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.room-actions button:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Room forms */
+
+.room-form,
+.room-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 480px;
+    padding: 24px;
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+}
+
+.room-form>div,
+.room-card form>div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.room-form label,
+.room-card form label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.room-form input:not([type="checkbox"]),
+.room-card form input:not([type="checkbox"]) {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    outline: none;
+    background-color: #ffffff;
+}
+
+.room-form input:focus,
+.room-card form input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.room-form input[type="checkbox"],
+.room-card form input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+}
+
+.room-form button,
+.room-card form button {
+    width: fit-content;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.room-form button:hover,
+.room-card form button:hover {
+    background-color: var(--primary-hover);
+}
+
+@media (max-width: 600px) {
+    .rooms-page {
+        padding: 30px 18px;
+    }
+
+    .rooms-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .room-form {
+        width: 100%;
+    }
+}

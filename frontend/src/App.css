@@ -1,0 +1,37 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.page-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    flex: 1;
+}
+
+/* Full-width pages */
+
+.page-container:has(.home-page),
+.page-container:has(.rooms-page),
+.page-container:has(.reservations-page),
+.page-container:has(.admin-dashboard),
+.page-container:has(.auth-page) {
+    max-width: none;
+    padding: 0;
+    display: flex;
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        padding: 30px 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-container {
+        padding: 22px 14px;
+    }
+}

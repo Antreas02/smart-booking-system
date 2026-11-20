@@ -1,103 +1,153 @@
-# Smart Booking and Reservation System
+# Smart Booking & Reservation System
 
-A backend application for managing rooms and reservations. I built this project to practise developing a Java application with Spring Boot, working with a PostgreSQL database, and adding authentication and access control.
+A full-stack booking and reservation management application built with Java, Spring Boot, React, and PostgreSQL. The system allows users to browse rooms, make reservations, and manage their bookings, while administrators can manage rooms and monitor the platform.
 
 ## Features
 
+### User features
 - User registration and login
 - JWT-based authentication
-- Two user roles: `USER` and `ADMIN`
-- Create, view, update, and delete rooms
-- Create, view, update, and cancel reservations
-- Reservations are linked to the user who created them and the room being booked
-- Validation to prevent invalid dates and overlapping reservations
-- Access control for protected operations
+- Browse available rooms
+- Create and manage reservations
+- View personal reservations
+- Cancel reservations
+
+### Admin features
+- Admin dashboard with system statistics
+- Create, update, and delete rooms
+- View and manage reservations
+- View registered users
+- Role-based access control
+
+### Reservation management
+- Prevents overlapping reservations
+- Validates reservation dates
+- Associates reservations with users and rooms
+- Prevents deletion of rooms with existing reservations
 
 ## Technologies
 
+**Backend**
 - Java 21
 - Spring Boot 4
 - Spring Data JPA
 - Spring Security
-- JSON Web Tokens (JWT)
-- PostgreSQL
+- JWT Authentication
 - Maven
-- Docker and Docker Compose
 
-## Running with Docker
+**Frontend**
+- React
+- JavaScript
+- Vite
+- React Router
+- CSS
 
-You will need [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
+**Database & Tools**
+- PostgreSQL
+- Docker
+- Docker Compose
+- Git
 
-1. Clone the repository:
+## Project Structure
 
-   ```bash
-   git clone https://github.com/Antreas02/smart-booking-system.git
-   cd smart-booking-system
-   ```
+```text
+smart-booking-system/
+├── backend/
+│   ├── src/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── pom.xml
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   └── package.json
+│
+├── .gitignore
+└── README.md
+```
 
-2. Create a file named `.env` in the project root directory.
+## Getting Started
 
-3. Add the following variables to the file, replacing the example values with your own:
+### Prerequisites
 
-   ```env
-   DB_PASSWORD=your_database_password
-   APP_JWT_SECRET=your_long_random_secret
-   ```
+- Java 21 (for running the backend locally)
+- Node.js and npm
+- Docker Desktop
 
-4. Build and start the application:
+### 1. Clone the repository
 
-   ```bash
-   docker compose up --build -d
-   ```
+```bash
+git clone https://github.com/Antreas02/smart-booking-system.git
+cd smart-booking-system
+```
 
-The application will be available at:
+### 2. Configure environment variables
+
+Create a `.env` file inside the `backend` folder:
+
+```env
+DB_PASSWORD=your_database_password
+APP_JWT_SECRET=your_long_random_secret
+```
+
+Use your own secure values. Never commit this file to GitHub.
+
+### 3. Start the backend and database
+
+Open a terminal in the `backend` folder:
+
+```bash
+cd backend
+docker compose up --build -d
+```
+
+The backend API will be available at:
 
 `http://localhost:8080`
 
-To stop the containers, run:
+### 4. Start the frontend
+
+Open another terminal in the `frontend` folder:
 
 ```bash
-docker compose down
+cd frontend
+npm install
+npm run dev
 ```
 
-## Running locally
+The frontend will be available at:
 
-To run the application without Docker, you will need Java 21 and PostgreSQL installed.
+`http://localhost:5173`
 
-1. Create a PostgreSQL database named `booking_system`.
-2. Create the `.env` file in the project root with the `DB_PASSWORD` and `APP_JWT_SECRET` variables shown above.
-3. Make sure PostgreSQL is running on `localhost:5432`.
-4. Start the application from the project directory.
+## Running Backend Tests
+
+From the `backend` folder, run:
 
 **Windows:**
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-**macOS / Linux:**
-
-```bash
-./mvnw spring-boot:run
-```
-
-## Running the tests
-
-Run the test suite with the Maven wrapper:
-
-**Windows:**
-
 ```powershell
 .\mvnw.cmd test
 ```
 
 **macOS / Linux:**
-
 ```bash
 ./mvnw test
 ```
 
-## Notes
+## Stopping the Application
 
-- The project currently contains the backend API; there is no frontend in this repository yet.
-- Do not commit your `.env` file. It contains local credentials and is excluded through `.gitignore`.
+From the `backend` folder:
+
+```bash
+docker compose down
+```
+
+## Authentication & Security
+
+The application uses JWT-based authentication and BCrypt password hashing. Protected endpoints require a valid token, while administrator operations are restricted to users with the `ADMIN` role.
+
+## Author
+
+Andreas Adamou
+
+GitHub: [Antreas02](https://github.com/Antreas02)

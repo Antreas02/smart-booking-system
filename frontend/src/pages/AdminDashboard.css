@@ -1,0 +1,200 @@
+.admin-dashboard {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100vh - 140px);
+    padding: 40px;
+
+    background:
+        linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.55)),
+        url('/images/admin-backround.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    font-family: Arial, sans-serif;
+    letter-spacing: -0.2px;
+}
+
+.admin-dashboard h2 {
+    margin-bottom: 10px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.7px;
+    color: #ffffff;
+}
+
+.dashboard-welcome {
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 15px;
+    letter-spacing: -0.2px;
+}
+
+.dashboard-section {
+    margin-top: 35px;
+}
+
+.dashboard-section>h3 {
+    margin-bottom: 18px;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: #ffffff;
+}
+
+.dashboard-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 20px;
+}
+
+.dashboard-stat-card,
+.dashboard-card,
+.dashboard-reservation-card {
+    padding: 22px;
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+}
+
+.dashboard-stat-card h4 {
+    margin: 0 0 12px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+.dashboard-stat-card p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+}
+
+.dashboard-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.dashboard-navigation a {
+    padding: 11px 18px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    transition: background-color 0.2s ease;
+}
+
+.dashboard-navigation a:hover {
+    background-color: var(--primary-hover);
+}
+
+.dashboard-chart {
+    width: 180px;
+    height: 180px;
+    margin: 20px auto;
+    border-radius: 50%;
+}
+
+.dashboard-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.dashboard-chart-legend p {
+    margin: 5px 0;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+}
+
+.dashboard-card p,
+.dashboard-card span,
+.dashboard-card label {
+    color: #ffffff;
+}
+
+.dashboard-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    letter-spacing: -0.2px;
+}
+
+.dashboard-table th {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dashboard-table td {
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.dashboard-recent-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.dashboard-reservation-card {
+    padding: 20px;
+}
+
+.dashboard-reservation-card h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+.dashboard-reservation-card p {
+    margin: 9px 0;
+    color: #ffffff;
+    font-size: 14px;
+    letter-spacing: -0.2px;
+}
+
+@media (max-width: 600px) {
+    .admin-dashboard {
+        padding: 30px 18px;
+    }
+
+    .dashboard-stat-card p {
+        font-size: 26px;
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+        padding: 11px;
+        white-space: nowrap;
+    }
+}
