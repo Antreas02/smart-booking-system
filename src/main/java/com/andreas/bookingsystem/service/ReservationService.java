@@ -1,3 +1,4 @@
+
 package com.andreas.bookingsystem.service;
 
 import org.springframework.http.HttpStatus;
@@ -27,16 +28,15 @@ public class ReservationService {
             ReservationRepository reservationRepository,
             RoomRepository roomRepository,
             UserRepository userRepository) {
-
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
     }
 
     public List<Reservation> getAllReservations(String userEmail) {
-
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found."));
 
         if (user.getRole() == UserRole.ADMIN) {
             return reservationRepository.findAll();
@@ -46,20 +46,26 @@ public class ReservationService {
     }
 
     public Reservation createReservation(ReservationRequest reservationRequest, String userEmail) {
-
         Room room = roomRepository.findById(reservationRequest.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Room not found."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Room not found."));
 
         if (!room.isAvailable()) {
-            throw new RuntimeException("This room is not available for reservations.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "This room is not available for reservations.");
         }
 
         if (reservationRequest.getStartTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Cannot create a reservation in the past.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Cannot create a reservation in the past.");
         }
 
         if (!reservationRequest.getStartTime().isBefore(reservationRequest.getEndTime())) {
-            throw new RuntimeException("End time must be after start time.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "End time must be after start time.");
         }
 
         List<Reservation> existingReservations = reservationRepository.findByRoomId(room.getId());
@@ -68,13 +74,15 @@ public class ReservationService {
             if (existingReservation.getStatus() != ReservationStatus.CANCELLED
                     && reservationRequest.getStartTime().isBefore(existingReservation.getEndTime())
                     && reservationRequest.getEndTime().isAfter(existingReservation.getStartTime())) {
-
-                throw new RuntimeException("This reservation overlaps with another reservation.");
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "This reservation overlaps with another reservation.");
             }
         }
 
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found."));
 
         Reservation newReservation = new Reservation(
                 user,
@@ -87,25 +95,25 @@ public class ReservationService {
     }
 
     public Reservation getReservationById(Long id, String userEmail) {
-
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found."));
 
         if (user.getRole() == UserRole.ADMIN) {
             return reservationRepository.findById(id)
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND, "Reservation not found"));
+                            HttpStatus.NOT_FOUND, "Reservation not found."));
         }
 
         return reservationRepository.findByIdAndUserEmail(id, userEmail)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Reservation not found"));
+                        HttpStatus.NOT_FOUND, "Reservation not found."));
     }
 
     public Reservation updateReservation(Long id, ReservationRequest reservationRequest, String userEmail) {
-
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found."));
 
         Reservation existingReservation;
 
@@ -120,31 +128,38 @@ public class ReservationService {
         }
 
         Room room = roomRepository.findById(reservationRequest.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Room not found."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Room not found."));
 
         if (!room.isAvailable()) {
-            throw new RuntimeException("This room is not available for reservations.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "This room is not available for reservations.");
         }
 
         if (reservationRequest.getStartTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Cannot update a reservation to a past date.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Cannot update a reservation to a past date.");
         }
 
         if (!reservationRequest.getStartTime().isBefore(reservationRequest.getEndTime())) {
-            throw new RuntimeException("End time must be after start time.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "End time must be after start time.");
         }
 
         List<Reservation> existingReservations = reservationRepository
                 .findByRoomId(reservationRequest.getRoomId());
 
         for (Reservation reservation : existingReservations) {
-
             if (!reservation.getId().equals(existingReservation.getId())
                     && reservation.getStatus() != ReservationStatus.CANCELLED
                     && reservationRequest.getStartTime().isBefore(reservation.getEndTime())
                     && reservationRequest.getEndTime().isAfter(reservation.getStartTime())) {
-
-                throw new RuntimeException("This reservation overlaps with another reservation.");
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "This reservation overlaps with another reservation.");
             }
         }
 
@@ -157,9 +172,9 @@ public class ReservationService {
     }
 
     public void deleteReservation(Long id, String userEmail) {
-
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found."));
 
         Reservation reservation;
 
@@ -176,4 +191,25 @@ public class ReservationService {
         reservationRepository.delete(reservation);
     }
 
+    public Reservation cancelReservation(Long id, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found."));
+
+        Reservation reservation;
+
+        if (user.getRole() == UserRole.ADMIN) {
+            reservation = reservationRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Reservation not found."));
+        } else {
+            reservation = reservationRepository.findByIdAndUserEmail(id, userEmail)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Reservation not found."));
+        }
+
+        reservation.setStatus(ReservationStatus.CANCELLED);
+
+        return reservationRepository.save(reservation);
+    }
 }

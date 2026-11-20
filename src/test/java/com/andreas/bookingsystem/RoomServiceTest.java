@@ -1,3 +1,4 @@
+
 package com.andreas.bookingsystem;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,23 +8,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.andreas.bookingsystem.model.Room;
 import com.andreas.bookingsystem.repository.RoomRepository;
+import com.andreas.bookingsystem.repository.ReservationRepository;
 import com.andreas.bookingsystem.service.RoomService;
 
 import java.util.List;
+import java.util.Optional;
+
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.verify;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class RoomServiceTest {
 
     @Mock
     private RoomRepository roomRepository;
+
+    @Mock
+    private ReservationRepository reservationRepository;
 
     @InjectMocks
     private RoomService roomService;
@@ -102,9 +111,30 @@ public class RoomServiceTest {
     @Test
     public void deleteRoom() {
 
+        Room existingRoom = new Room("Meeting Room A", 5, "First Floor", true);
+
+        when(roomRepository.findById(5L)).thenReturn(Optional.of(existingRoom));
+        when(reservationRepository.findByRoomId(5L)).thenReturn(List.of());
+
         roomService.deleteRoom(5L);
 
-        verify(roomRepository).deleteById(5L);
+        verify(roomRepository).delete(existingRoom);
+    }
+
+    @Test
+    public void cannotDeleteRoomWithReservations() {
+
+        Room existingRoom = new Room("Meeting Room A", 5, "First Floor", true);
+
+        when(roomRepository.findById(5L)).thenReturn(Optional.of(existingRoom));
+        when(reservationRepository.findByRoomId(5L))
+                .thenReturn(List.of(new com.andreas.bookingsystem.model.Reservation()));
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> roomService.deleteRoom(5L));
+
+        verify(roomRepository, never()).delete(existingRoom);
     }
 
 }

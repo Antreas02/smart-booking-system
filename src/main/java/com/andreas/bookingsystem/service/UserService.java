@@ -1,12 +1,17 @@
+
 package com.andreas.bookingsystem.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import com.andreas.bookingsystem.dto.LoginRequest;
 import com.andreas.bookingsystem.model.User;
 import com.andreas.bookingsystem.model.UserRole;
 import com.andreas.bookingsystem.repository.UserRepository;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -42,12 +47,24 @@ public class UserService {
     public String loginUser(LoginRequest loginRequest) {
 
         User user = userRepository.findByEmail(loginRequest.email())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password."));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Invalid email or password."));
 
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password.");
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Invalid email or password.");
         }
 
         return jwtService.generateToken(user.getEmail());
+    }
+
+    public User getCurrentUser(String userEmail) {
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found."));
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
