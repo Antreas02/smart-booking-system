@@ -9,7 +9,7 @@ function Rooms({ currentUser }) {
     const [rooms, setRooms] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
-    const [message, setMessage] = useState('')
+    const [toast, setToast] = useState(null)
 
     const [name, setName] = useState('')
     const [capacity, setCapacity] = useState('')
@@ -17,6 +17,19 @@ function Rooms({ currentUser }) {
     const [available, setAvailable] = useState(false)
 
     const [editingRoom, setEditingRoom] = useState(null)
+
+    // Automatically hide the notification after 3 seconds
+    useEffect(() => {
+        if (!toast) {
+            return
+        }
+
+        const timer = setTimeout(() => {
+            setToast(null)
+        }, 4000)
+
+        return () => clearTimeout(timer)
+    }, [toast])
 
     useEffect(() => {
         async function fetchRooms() {
@@ -37,7 +50,7 @@ function Rooms({ currentUser }) {
 
     async function handleCreateRoom(event) {
         event.preventDefault()
-        setMessage('')
+        setToast(null)
 
         const newRoom = {
             name: name,
@@ -64,9 +77,15 @@ function Rooms({ currentUser }) {
             setLocation('')
             setAvailable(false)
 
-            setMessage('Room created successfully!')
+            setToast({
+                type: 'success',
+                message: 'Room created successfully!'
+            })
         } catch (error) {
-            setMessage(error.message)
+            setToast({
+                type: 'error',
+                message: error.message
+            })
         }
     }
 
@@ -79,12 +98,12 @@ function Rooms({ currentUser }) {
             available: room.available
         })
 
-        setMessage('')
+        setToast(null)
     }
 
     async function handleUpdateRoom(event) {
         event.preventDefault()
-        setMessage('')
+        setToast(null)
 
         const updatedRoom = {
             name: editingRoom.name,
@@ -111,9 +130,16 @@ function Rooms({ currentUser }) {
             )
 
             setEditingRoom(null)
-            setMessage('Room updated successfully!')
+
+            setToast({
+                type: 'success',
+                message: 'Room updated successfully!'
+            })
         } catch (error) {
-            setMessage(error.message)
+            setToast({
+                type: 'error',
+                message: error.message
+            })
         }
     }
 
@@ -126,7 +152,7 @@ function Rooms({ currentUser }) {
             return
         }
 
-        setMessage('')
+        setToast(null)
 
         try {
             await apiRequest(`/rooms/${roomId}`, {
@@ -137,9 +163,15 @@ function Rooms({ currentUser }) {
                 previousRooms.filter((room) => room.id !== roomId)
             )
 
-            setMessage('Room deleted successfully!')
+            setToast({
+                type: 'success',
+                message: 'Room deleted successfully!'
+            })
         } catch (error) {
-            setMessage(error.message)
+            setToast({
+                type: 'error',
+                message: error.message
+            })
         }
     }
 
@@ -155,7 +187,29 @@ function Rooms({ currentUser }) {
         <main className="rooms-page">
             <h2>Available Rooms</h2>
 
-            {message && <p>{message}</p>}
+            {toast && (
+                <div
+                    className={`toast-notification ${toast.type}`}
+                    role="status"
+                    aria-live="polite"
+                >
+                    {toast.type === 'success' && (
+                        <div className="toast-icon">
+                            ✓
+                        </div>
+                    )}
+
+                    {toast.type === 'error' && (
+                        <div className="toast-icon error-icon">
+                            !
+                        </div>
+                    )}
+
+                    <div className="toast-content">
+                        <p className="toast-message">{toast.message}</p>
+                    </div>
+                </div>
+            )}
 
             {isAdmin && (
                 <>

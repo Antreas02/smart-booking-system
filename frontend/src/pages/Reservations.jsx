@@ -11,6 +11,20 @@ function Reservations() {
     const [endTime, setEndTime] = useState('')
     const [selectedStatus, setSelectedStatus] = useState('ALL')
     const [message, setMessage] = useState('Loading reservations...')
+    const [toast, setToast] = useState(null)
+
+    // Automatically hide the notification after 4 seconds
+    useEffect(() => {
+        if (!toast) {
+            return
+        }
+
+        const timer = setTimeout(() => {
+            setToast(null)
+        }, 4000)
+
+        return () => clearTimeout(timer)
+    }, [toast])
 
     useEffect(() => {
         async function fetchData() {
@@ -34,7 +48,7 @@ function Reservations() {
 
     async function handleCreateReservation(event) {
         event.preventDefault()
-        setMessage('')
+        setToast(null)
 
         const reservationData = {
             roomId: Number(selectedRoomId),
@@ -63,9 +77,15 @@ function Reservations() {
             setStartTime('')
             setEndTime('')
 
-            setMessage('Reservation created successfully!')
+            setToast({
+                type: 'success',
+                message: 'Reservation created successfully!'
+            })
         } catch (error) {
-            setMessage(error.message)
+            setToast({
+                type: 'error',
+                message: error.message
+            })
         }
     }
 
@@ -78,7 +98,7 @@ function Reservations() {
             return
         }
 
-        setMessage('')
+        setToast(null)
 
         try {
             const response = await apiRequest(`/reservations/${reservationId}/cancel`, {
@@ -95,9 +115,15 @@ function Reservations() {
                 )
             )
 
-            setMessage('Reservation cancelled successfully!')
+            setToast({
+                type: 'success',
+                message: 'Reservation cancelled successfully!'
+            })
         } catch (error) {
-            setMessage(error.message)
+            setToast({
+                type: 'error',
+                message: error.message
+            })
         }
     }
 
@@ -116,6 +142,30 @@ function Reservations() {
             <h2>My Reservations</h2>
 
             {message && <p>{message}</p>}
+
+            {toast && (
+                <div
+                    className={`toast-notification ${toast.type}`}
+                    role="status"
+                    aria-live="polite"
+                >
+                    {toast.type === 'success' && (
+                        <div className="toast-icon">
+                            ✓
+                        </div>
+                    )}
+
+                    {toast.type === 'error' && (
+                        <div className="toast-icon error-icon">
+                            !
+                        </div>
+                    )}
+
+                    <div className="toast-content">
+                        <p className="toast-message">{toast.message}</p>
+                    </div>
+                </div>
+            )}
 
             <h3>Create a Reservation</h3>
 
